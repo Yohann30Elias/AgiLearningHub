@@ -21,7 +21,3 @@ Eine **SAP-basierte Learning Experience**, die Spaß macht, übersichtlich ist u
 ## 🔮 Vision
 Lernen soll kein Muss, sondern ein **Erlebnis** sein.  
 Die Agi Learning Platform schafft eine Umgebung, in der Wissen lebendig wird.  
-
----
-
-✨ Made with ❤️ by **Agi** ✨
