@@ -1,0 +1,15 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.App">
+  <App>
+    <Page title="AGI Learning Hub">
+      <Text text="Default Behavior" />
+      <List id="courseList" noDataText="Keine Kurse gefunden" items="{ path: '/' }">
+        <items>
+          <StandardListItem
+            title="{title}"
+            description="{level}"
+            info="{= ${durationH} ? ${durationH} + 'h' : '' }" />
+        </items>
+      </List>
+    </Page>
+  </App>
+</mvc:View>

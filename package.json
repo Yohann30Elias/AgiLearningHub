@@ -1,0 +1,40 @@
+{
+  "name": "agi-learning-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AGI Learning Hub - Learning-Plattform",
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": { "node": ">=18.17 <21" },
+  "scripts": {
+    "start": "ui5 serve --open index.html",
+    "start:flp": "ui5 serve --open test/flpSandbox.html",
+    "build": "ui5 build --all --clean-dest",
+    "lint": "eslint webapp --ext .js,.ts",
+    "format": "prettier --write ."
+  },
+  "keywords": ["ui5","openui5","sapui5","fiori","learning","agi-learning-hub"],
+  "devDependencies": {
+    "@ui5/cli": "^3.0.0",
+    "ui5-middleware-livereload": "^3.1.2",
+    "ui5-middleware-servestatic": "^3.3.1",
+    "ui5-tooling-transpile": "^3.9.0",
+    "@babel/core": "^7.24.0",
+    "@babel/preset-env": "^7.24.0",
+    "@babel/plugin-transform-runtime": "^7.24.0",
+    "@babel/runtime": "^7.24.0",
+    "typescript": "^5.4.0",
+    "eslint": "^9.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "prettier": "^3.2.5"
+  },
+  "ui5": {
+    "dependencies": [
+      "ui5-middleware-livereload",
+      "ui5-middleware-servestatic",
+      "ui5-tooling-transpile"
+    ]
+  }
+}
+

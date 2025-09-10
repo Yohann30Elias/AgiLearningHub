@@ -1,0 +1,17 @@
+{
+  "sap.app": {
+    "id": "agilh",
+    "type": "application",
+    "title": "AGI Learning Hub"
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "agilh.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "app"
+    },
+    "dependencies": { "libs": { "sap.m": {}, "sap.ui.core": {} } },
+    "routing": { "config": {}, "routes": [], "targets": {} }
+  }
+}
