@@ -1,15 +1,32 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.App">
-  <App>
-    <Page title="AGI Learning Hub">
-      <Text text="Default Behavior" />
-      <List id="courseList" noDataText="Keine Kurse gefunden" items="{ path: '/' }">
-        <items>
-          <StandardListItem
-            title="{title}"
-            description="{level}"
-            info="{= ${durationH} ? ${durationH} + 'h' : '' }" />
-        </items>
-      </List>
-    </Page>
-  </App>
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:core="sap.ui.core"
+  controllerName="agilh.controller.App">
+
+  <VBox fitContainer="true">
+    <!-- Immer sichtbare Topbar -->
+    <f:ShellBar id="shell"
+      class="agilita-shellbar"
+      title="AGI Learning Hub"
+      homeIconPressed=".onHome" />
+
+    <!-- Einfache Navi-Leiste für Seitenwechsel -->
+    <OverflowToolbar design="Solid" class="sapUiTinyMarginBottom">
+      <Button text="Landing"        type="Transparent" press=".onNav">
+        <customData><core:CustomData key="route" value="landing"/></customData>
+      </Button>
+      <Button text="Katalog"        type="Transparent" press=".onNav">
+        <customData><core:CustomData key="route" value="catalog"/></customData>
+      </Button>
+      <Button text="Meine Learnings" type="Transparent" press=".onNav">
+        <customData><core:CustomData key="route" value="mylearnings"/></customData>
+      </Button>
+      <ToolbarSpacer/>
+    </OverflowToolbar>
+
+    <!-- Content-Bereich, hier rendert der Router die Seiten -->
+    <NavContainer id="appNav"/>
+  </VBox>
 </mvc:View>

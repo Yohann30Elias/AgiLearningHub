@@ -1,0 +1,44 @@
+<mvc:View
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:f="sap.f"
+  xmlns:core="sap.ui.core"
+  controllerName="agilh.controller.Landing">
+
+  <Page enableScrolling="true" showNavButton="false" title="Willkommen">
+    <content>
+      <Carousel id="hero" height="18rem" class="sapUiMediumMarginBottom">
+        <pages>
+          <VBox class="sapUiResponsiveContentPadding"
+                alignItems="Center" justifyContent="Center" height="100%">
+            <core:Icon src="sap-icon://education" size="3rem" class="sapUiSmallMarginBottom"/>
+            <Title level="H3" text="Starte dein Learning"/>
+            <Text text="Kuratiertes Wissen - kompakt und praxisnah."/>
+            <Button text="AGILITA" type="Emphasized" class="sapUiSmallMarginTop"
+                    press=".onOpenExternal">
+              <customData><core:CustomData key="url" value="https://www.agilita.ch"/></customData>
+            </Button>
+          </VBox>
+        </pages>
+      </Carousel>
+
+      <Toolbar design="Transparent" class="sapUiTinyMarginBottom">
+        <Title level="H4" text="Schnellzugriff"/>
+        <ToolbarSpacer/>
+      </Toolbar>
+
+      <List>
+        <items>
+          <StandardListItem title="OpenUI5 SDK" description="sdk.openui5.org"
+                            type="Navigation" press=".onOpenExternal">
+            <customData><core:CustomData key="url" value="https://sdk.openui5.org/"/></customData>
+          </StandardListItem>
+          <StandardListItem title="SAP Learning" description="learning.sap.com"
+                            type="Navigation" press=".onOpenExternal">
+            <customData><core:CustomData key="url" value="https://learning.sap.com/"/></customData>
+          </StandardListItem>
+        </items>
+      </List>
+    </content>
+  </Page>
+</mvc:View>

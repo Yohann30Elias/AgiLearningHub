@@ -9,9 +9,34 @@
       "viewName": "agilh.view.App",
       "type": "XML",
       "async": true,
-      "id": "app"
+      "id": "appShell"
     },
-    "dependencies": { "libs": { "sap.m": {}, "sap.ui.core": {} } },
-    "routing": { "config": {}, "routes": [], "targets": {} }
+    "dependencies": {
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.f": {}
+      }
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "agilh.view",
+        "controlId": "appNav",
+        "controlAggregation": "pages",
+        "async": true
+      },
+      "routes": [
+        { "name": "landing", "pattern": "", "target": "landing" },
+        { "name": "catalog", "pattern": "catalog", "target": "catalog" },
+        { "name": "mylearnings", "pattern": "mylearnings", "target": "mylearnings" }
+      ],
+      "targets": {
+        "landing":   { "viewName": "Landing",     "viewId": "landing",     "viewLevel": 1 },
+        "catalog":   { "viewName": "Catalog",      "viewId": "catalog",      "viewLevel": 2 },
+        "mylearnings": { "viewName": "MyLearnings","viewId": "mylearnings",  "viewLevel": 2 }
+      }
+    }
   }
 }

@@ -1,10 +1,16 @@
-sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/model/json/JSONModel"], function (Controller, JSONModel) {
+sap.ui.define(["sap/ui/core/mvc/Controller"], function (Controller) {
   "use strict";
   return Controller.extend("agilh.controller.App", {
-    onInit: function () {
-      const oModel = new JSONModel();
-      oModel.loadData("/api/courses.json");
-      this.getView().byId("courseList").setModel(oModel);
+    onNav: function (oEvent) {
+      var aCD = oEvent.getSource().getCustomData() || [];
+      var cdRoute = aCD.find(function (cd) { return cd.getKey && cd.getKey() === "route"; });
+      var sRoute = cdRoute && cdRoute.getValue();
+      if (sRoute) {
+        this.getOwnerComponent().getRouter().navTo(sRoute);
+      }
+    },
+    onHome: function () {
+      this.getOwnerComponent().getRouter().navTo("landing");
     }
   });
 });

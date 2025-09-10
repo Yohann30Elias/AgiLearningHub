@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>AGI Learning Hub</title>
-    <script
-      id="sap-ui-bootstrap"
-      src="https://sdk.openui5.org/resources/sap-ui-core.js"
-      data-sap-ui-theme="sap_horizon"
-      data-sap-ui-async="true"
-      data-sap-ui-compatVersion="edge"
-      data-sap-ui-resourceroots='{"agilh": "./"}'>
-    </script>
-    <script>
-      sap.ui.getCore().attachInit(function () {
-        new sap.ui.core.ComponentContainer({
-          name: "agilh",
-          height: "100%"
-        }).placeAt("content");
-      });
-    </script>
-  </head>
-  <body class="sapUiBody" id="content" style="height:100%"></body>
+<head>
+  <meta charset="utf-8" />
+  <title>AGI Learning Hub</title>
+  <link rel="stylesheet" href="css/agilita.css" />
+  <script id="sap-ui-bootstrap"
+    src="https://sdk.openui5.org/resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_horizon"
+    data-sap-ui-async="true"
+    data-sap-ui-compatVersion="edge"
+    data-sap-ui-resourceroots='{"agilh":"./"}'>
+  </script>
+  <script>
+    sap.ui.getCore().attachInit(function () {
+      new sap.ui.core.ComponentContainer({
+        name: "agilh",
+        height: "100%"
+      }).placeAt("content");
+    });
+  </script>
+</head>
+<body class="sapUiBody" id="content" style="height:100%"></body>
 </html>

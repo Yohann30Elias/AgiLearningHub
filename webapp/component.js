@@ -14,7 +14,7 @@ sap.ui.define([
       this.setModel(oModel);
 
       // Routing
-      if (this.getRouter) this.getRouter().initialize();
+      this.getRouter().initialize();
     }
   });
 });

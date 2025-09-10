@@ -1,0 +1,13 @@
+:root{
+  --agilita-brand: #00a29a; /* passe an, falls du die exakte Farbe hast */
+  --agilita-dark:  #003B3A;
+}
+
+.agilita-shellbar {
+  background: linear-gradient(90deg, var(--agilita-dark), var(--agilita-brand));
+  color: #fff;
+}
+.agilita-shellbar .sapMTitle { color: #fff; }
+
+.agilita-hero-card .sapMTitle { color: var(--agilita-dark); }
+.agilita-section-title { color: var(--agilita-dark); }
