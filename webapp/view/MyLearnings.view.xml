@@ -1,0 +1,5 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.MyLearnings">
+  <Page title="Meine Kurse">
+    <content><Text text="Angefangene &amp; favorisierte Kurse (Platzhalter)"/></content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,11 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.Catalog">
+  <Page title="Übersicht">
+    <content>
+      <List growing="true" noDataText="(Kurse folgen)">
+        <items>
+          <StandardListItem title="Kurse &amp; Lernpfade - Platzhalter"/>
+        </items>
+      </List>
+    </content>
+  </Page>
+</mvc:View>

@@ -1,0 +1,7 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.Profile">
+  <Page title="Profil">
+    <content>
+      <ObjectHeader title="Dein Profil" number="{landing>/user/name}" numberUnit="{landing>/user/email}" />
+    </content>
+  </Page>
+</mvc:View>

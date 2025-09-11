@@ -30,12 +30,22 @@
       "routes": [
         { "name": "landing", "pattern": "", "target": "landing" },
         { "name": "catalog", "pattern": "catalog", "target": "catalog" },
-        { "name": "mylearnings", "pattern": "mylearnings", "target": "mylearnings" }
+        { "name": "assigned", "pattern": "assigned", "target": "assigned"},
+        { "name": "mylearnings", "pattern": "mylearnings", "target": "mylearnings" },
+        { "name": "favorites", "pattern": "favorites", "target": "favorites" },
+        { "name": "completed", "pattern": "completed", "target": "completed" },
+        { "name": "manager", "pattern": "manager", "target": "manager" },
+        { "name": "profile", "pattern": "profile", "target": "profile" }
       ],
       "targets": {
         "landing":   { "viewName": "Landing",     "viewId": "landing",     "viewLevel": 1 },
         "catalog":   { "viewName": "Catalog",      "viewId": "catalog",      "viewLevel": 2 },
-        "mylearnings": { "viewName": "MyLearnings","viewId": "mylearnings",  "viewLevel": 2 }
+        "assigned":   { "viewName": "Assigned",      "viewId": "assigned",      "viewLevel": 2 },
+        "mylearnings": { "viewName": "MyLearnings","viewId": "mylearnings",  "viewLevel": 2 },
+        "favorites":   { "viewName": "Favorites",      "viewId": "favorites",      "viewLevel": 2 },
+        "completed":   { "viewName": "Completed",      "viewId": "completed",      "viewLevel": 2 },
+        "manager":   { "viewName": "Manager",      "viewId": "manager",      "viewLevel": 2 },
+        "profile":   { "viewName": "Profile",      "viewId": "profile",      "viewLevel": 2 }
       }
     }
   }

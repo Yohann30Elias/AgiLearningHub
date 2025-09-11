@@ -1,0 +1,9 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.Assigned">
+  <Page title="Zuweisungen">
+    <content>
+      <List noDataText="Keine Zuweisungen">
+        <items><StandardListItem title="(Platzhalter)"/></items>
+      </List>
+    </content>
+  </Page>
+</mvc:View>
