@@ -6,27 +6,20 @@
   controllerName="agilh.controller.App">
 
   <VBox fitContainer="true">
-    <!-- Immer sichtbare Topbar -->
-    <f:ShellBar id="shell"
-      class="agilita-shellbar"
-      title="AGI Learning Hub"
-      homeIconPressed=".onHome" />
+    <!-- 1) eine ShellBar -->
+    <f:ShellBar id="shell" class="agilita-shellbar" title="AGI Learning Hub" />
 
-    <!-- Einfache Navi-Leiste für Seitenwechsel -->
-    <OverflowToolbar design="Solid" class="sapUiTinyMarginBottom">
-      <Button text="Landing"        type="Transparent" press=".onNav">
+    <!-- 2) sehr schlanke „Nav-Zeile“ (Links, KEINE Toolbar) -->
+    <HBox class="agilita-nav" justifyContent="Start" alignItems="Center">
+      <Link text="Landing" press=".onTopNavLink">
         <customData><core:CustomData key="route" value="landing"/></customData>
-      </Button>
-      <Button text="Katalog"        type="Transparent" press=".onNav">
-        <customData><core:CustomData key="route" value="catalog"/></customData>
-      </Button>
-      <Button text="Meine Learnings" type="Transparent" press=".onNav">
-        <customData><core:CustomData key="route" value="mylearnings"/></customData>
-      </Button>
-      <ToolbarSpacer/>
-    </OverflowToolbar>
+      </Link>
+      <!-- später weitere Links einfügen -->
+    </HBox>
 
-    <!-- Content-Bereich, hier rendert der Router die Seiten -->
-    <NavContainer id="appNav"/>
+    <!-- 3) robuster Fullscreen-Container für Routing -->
+    <App id="appNav" height="100%" width="100%">
+      <layoutData><FlexItemData growFactor="1"/></layoutData>
+    </App>
   </VBox>
 </mvc:View>

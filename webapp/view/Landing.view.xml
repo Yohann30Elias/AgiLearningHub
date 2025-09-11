@@ -5,40 +5,172 @@
   xmlns:core="sap.ui.core"
   controllerName="agilh.controller.Landing">
 
-  <Page enableScrolling="true" showNavButton="false" title="Willkommen">
+  <Page showHeader="false" enableScrolling="true" backgroundDesign="Transparent">
     <content>
-      <Carousel id="hero" height="18rem" class="sapUiMediumMarginBottom">
-        <pages>
-          <VBox class="sapUiResponsiveContentPadding"
-                alignItems="Center" justifyContent="Center" height="100%">
-            <core:Icon src="sap-icon://education" size="3rem" class="sapUiSmallMarginBottom"/>
-            <Title level="H3" text="Starte dein Learning"/>
-            <Text text="Kuratiertes Wissen - kompakt und praxisnah."/>
-            <Button text="AGILITA" type="Emphasized" class="sapUiSmallMarginTop"
-                    press=".onOpenExternal">
-              <customData><core:CustomData key="url" value="https://www.agilita.ch"/></customData>
-            </Button>
-          </VBox>
-        </pages>
-      </Carousel>
 
-      <Toolbar design="Transparent" class="sapUiTinyMarginBottom">
-        <Title level="H4" text="Schnellzugriff"/>
+      <!-- HERO (zentriert, nicht volle Breite) -->
+      <VBox class="agilita-hero-wrap">
+        <Carousel id="hero"
+                  width="100%"
+                  height="50vh"
+                  showPageIndicator="false"
+                  pageIndicatorPlacement="Bottom"
+                  class="agilita-hero sapUiMediumMarginBottom">
+
+          <pages>
+            <!-- 1) learning.sap.com -->
+            <VBox class="hero hero-1" height="100%">
+              <VBox class="hero-overlay" alignItems="Start" justifyContent="End" height="100%">
+                <Title level="H2" class="hero-title" text="SAP Learning" />
+                <Text class="hero-sub" text="Offizielle Kurse &amp; Lernpfade" />
+                <Button text="learning.sap.com öffnen" type="Emphasized" press=".onOpenExternal">
+                  <customData><core:CustomData key="url" value="https://learning.sap.com/"/></customData>
+                </Button>
+              </VBox>
+            </VBox>
+
+            <!-- 2) AGILITA News -->
+            <VBox class="hero hero-2" height="100%">
+              <VBox class="hero-overlay" alignItems="Start" justifyContent="End" height="100%">
+                <Title level="H2" class="hero-title" text="AGILITA News" />
+                <Text class="hero-sub" text="Aktuelle Stories &amp; Insights" />
+                <Button text="Zu den News" type="Emphasized" press=".onOpenExternal">
+                  <customData><core:CustomData key="url" value="https://www.agilita.ch/news/"/></customData>
+                </Button>
+              </VBox>
+            </VBox>
+
+            <!-- 3) Weitere AGILITA Websites -->
+            <VBox class="hero hero-3" height="100%">
+              <VBox class="hero-overlay" alignItems="Start" justifyContent="End" height="100%">
+                <Title level="H2" class="hero-title" text="AGILITA Websites" />
+                <Text class="hero-sub" text="Portfolio, Services, Team" />
+                <Button text="agilita.ch" type="Emphasized" press=".onOpenExternal">
+                  <customData><core:CustomData key="url" value="https://www.agilita.ch/"/></customData>
+                </Button>
+              </VBox>
+            </VBox>
+
+            <!-- 4) UI5 Demo Kit -->
+            <VBox class="hero hero-4" height="100%">
+              <VBox class="hero-overlay" alignItems="Start" justifyContent="End" height="100%">
+                <Title level="H2" class="hero-title" text="UI5 Demo Kit" />
+                <Text class="hero-sub" text="Controls, Demos &amp; API" />
+                <Button text="Demo Kit öffnen" type="Emphasized" press=".onOpenExternal">
+                  <customData><core:CustomData key="url" value="https://sdk.openui5.org/"/></customData>
+                </Button>
+              </VBox>
+            </VBox>
+
+            <!-- 5) SAP Dokus -->
+            <VBox class="hero hero-5" height="100%">
+              <VBox class="hero-overlay" alignItems="Start" justifyContent="End" height="100%">
+                <Title level="H2" class="hero-title" text="SAP Dokumentation" />
+                <Text class="hero-sub" text="Guides &amp; How-Tos" />
+                <Button text="help.sap.com" type="Emphasized" press=".onOpenExternal">
+                  <customData><core:CustomData key="url" value="https://help.sap.com/"/></customData>
+                </Button>
+              </VBox>
+            </VBox>
+          </pages>
+        </Carousel>
+      </VBox>
+
+      <!-- ===== Sektion: Deine letzte Aktivität ===== -->
+      <Panel headerText="Deine letzte Aktivität" class="sapUiMediumMarginBottom sapUiResponsiveContentPadding">
+        <content>
+          <!-- Empty-State ohne Spezial-Illustration (robust) -->
+          <VBox visible="{landing>/showEmptyState}" alignItems="Center" justifyContent="Center" class="sapUiMediumMargin">
+            <core:Icon src="sap-icon://hint" size="2rem" class="sapUiSmallMarginBottom"/>
+            <Title level="H5" text="Melde dich an, um weiterzulernen"/>
+            <Text text="Hier erscheint der zuletzt geöffnete Kurs."/>
+          </VBox>
+
+          <!-- letzter Kurs -->
+          <HBox visible="{landing>/showInProgress}" wrap="Wrap" alignItems="Center" justifyContent="SpaceBetween">
+            <VBox class="sapUiSmallMarginEnd">
+              <Title level="H4" text="{landing>/lastCourse/title}"/>
+              <ObjectStatus text="{landing>/lastCourse/level}" state="None"/>
+              <Text text="{= ${landing>/lastCourse/durationH} ? ${landing>/lastCourse/durationH} + ' Std' : '-' }"/>
+              <!-- dezenter Fortschritt ohne extra CSS -->
+              <ProgressIndicator
+                class="sapUiSmallMarginTop"
+                percentValue="{= ${landing>/lastCourse/progressPercent} || 0 }"
+                displayValue="{= (${landing>/lastCourse/progressPercent} || 0) + '%'}"
+                state="Success"/>
+            </VBox>
+            <Button text="Weiterlernen" type="Emphasized" press=".onOpenCourse">
+              <customData><core:CustomData key="courseId" value="{landing>/lastCourse/id}"/></customData>
+            </Button>
+          </HBox>
+        </content>
+      </Panel>
+
+      <!-- ===== Sektion: Empfehlungen (Grid, kartenartig, ohne CSS) ===== -->
+      <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
+        <Title level="H4" text="{= ${landing>/user/isLoggedIn} ? 'Empfehlungen für dich' : 'Aktuell &amp; empfehlenswert' }"/>
         <ToolbarSpacer/>
+        <Button text="Alle ansehen" type="Transparent" press=".onOpenExternal">
+          <customData><core:CustomData key="url" value="https://sdk.openui5.org/#/entity/sap.m.GenericTile"/></customData>
+        </Button>
       </Toolbar>
 
-      <List>
-        <items>
-          <StandardListItem title="OpenUI5 SDK" description="sdk.openui5.org"
-                            type="Navigation" press=".onOpenExternal">
-            <customData><core:CustomData key="url" value="https://sdk.openui5.org/"/></customData>
-          </StandardListItem>
-          <StandardListItem title="SAP Learning" description="learning.sap.com"
-                            type="Navigation" press=".onOpenExternal">
-            <customData><core:CustomData key="url" value="https://learning.sap.com/"/></customData>
-          </StandardListItem>
-        </items>
+      <f:GridList items="{landing>/recommendations}" inset="false" noDataText="Keine Empfehlungen verfügbar"
+                  class="sapUiSmallMarginBottom sapUiResponsiveContentPadding">
+        <f:items>
+          <f:GridListItem>
+            <GenericTile header="{landing>title}" subheader="{landing>level}" frameType="TwoByOne" press=".onOpenCourse">
+              <customData><core:CustomData key="courseId" value="{landing>id}"/></customData>
+              <TileContent>
+                <content>
+                  <VBox class="sapUiSmallMargin">
+                    <ObjectStatus text="{= ${landing>durationH} ? ${landing>durationH} + ' Std' : '-' }" state="None"/>
+                  </VBox>
+                </content>
+              </TileContent>
+            </GenericTile>
+          </f:GridListItem>
+        </f:items>
+      </f:GridList>
+
+      <!-- ===== Sektion: To-dos (schlanke Checkliste) ===== -->
+      <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
+        <Title level="H4" text="To-dos"/>
+      </Toolbar>
+      <List items="{landing>/todos}" class="sapUiSmallMarginBottom sapUiResponsiveContentPadding"
+            noDataText="Keine offenen Aufgaben">
+        <CustomListItem>
+          <HBox alignItems="Center" justifyContent="SpaceBetween">
+            <HBox alignItems="Center">
+              <CheckBox selected="{landing>done}" select=".onToggleTodo"/>
+              <Text text="{landing>title}" class="sapUiTinyMarginBegin"/>
+            </HBox>
+            <ObjectStatus text="{= ${landing>done} ? 'erledigt' : 'offen' }"
+                          state="{= ${landing>done} ? 'Success' : 'Warning' }"/>
+          </HBox>
+        </CustomListItem>
       </List>
+
+      <!-- ===== Sektion: Neu hinzugekommen (mit Objekt-Listitems) ===== -->
+      <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
+        <Title level="H4" text="Neu hinzugekommen"/>
+      </Toolbar>
+      <List items="{landing>/newCourses}" class="sapUiResponsiveContentPadding" noDataText="Keine neuen Kurse">
+        <ObjectListItem
+            title="{landing>title}"
+            number="{= ${landing>level} }"
+            numberUnit="Level"
+            type="Active" press=".onOpenCourse">
+          <firstStatus>
+            <ObjectStatus state="Information" text="Neu"/>
+          </firstStatus>
+          <customData>
+            <core:CustomData key="courseId" value="{landing>id}"/>
+          </customData>
+        </ObjectListItem>
+      </List>
+
+
     </content>
   </Page>
 </mvc:View>
