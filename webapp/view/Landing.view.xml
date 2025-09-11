@@ -8,7 +8,7 @@
   <Page showHeader="false" enableScrolling="true" backgroundDesign="Transparent">
     <content>
 
-      <!-- HERO (zentriert, nicht volle Breite) -->
+      <!-- HERO  -->
       <VBox class="agilita-hero-wrap">
         <Carousel id="hero"
                   width="100%"
@@ -92,7 +92,7 @@
               <Title level="H4" text="{landing>/lastCourse/title}"/>
               <ObjectStatus text="{landing>/lastCourse/level}" state="None"/>
               <Text text="{= ${landing>/lastCourse/durationH} ? ${landing>/lastCourse/durationH} + ' Std' : '-' }"/>
-              <!-- dezenter Fortschritt ohne extra CSS -->
+              <!-- dezenter Fortschritt -->
               <ProgressIndicator
                 class="sapUiSmallMarginTop"
                 percentValue="{= ${landing>/lastCourse/progressPercent} || 0 }"
@@ -106,7 +106,7 @@
         </content>
       </Panel>
 
-      <!-- ===== Sektion: Empfehlungen (Grid, kartenartig, ohne CSS) ===== -->
+      <!-- ===== Sektion: Empfehlungen ===== -->
       <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
         <Title level="H4" text="{= ${landing>/user/isLoggedIn} ? 'Empfehlungen für dich' : 'Aktuell &amp; empfehlenswert' }"/>
         <ToolbarSpacer/>
@@ -133,7 +133,7 @@
         </f:items>
       </f:GridList>
 
-      <!-- ===== Sektion: To-dos (schlanke Checkliste) ===== -->
+      <!-- ===== Sektion: To-dos ===== -->
       <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
         <Title level="H4" text="To-dos"/>
       </Toolbar>
@@ -151,7 +151,7 @@
         </CustomListItem>
       </List>
 
-      <!-- ===== Sektion: Neu hinzugekommen (mit Objekt-Listitems) ===== -->
+      <!-- ===== Sektion: Neu hinzugekommen ===== -->
       <Toolbar design="Auto" class="sapUiTinyMarginBottom sapUiResponsiveContentPadding">
         <Title level="H4" text="Neu hinzugekommen"/>
       </Toolbar>

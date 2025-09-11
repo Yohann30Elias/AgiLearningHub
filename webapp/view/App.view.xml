@@ -9,13 +9,56 @@
     <!-- 1) eine ShellBar -->
     <f:ShellBar id="shell" class="agilita-shellbar" title="AGI Learning Hub" />
 
-    <!-- 2) sehr schlanke „Nav-Zeile“ (Links, KEINE Toolbar) -->
     <HBox class="agilita-nav" justifyContent="Start" alignItems="Center">
+
       <Link text="Landing" press=".onTopNavLink">
         <customData><core:CustomData key="route" value="landing"/></customData>
       </Link>
-      <!-- später weitere Links einfügen -->
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Übersicht" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="catalog"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Zuweisungen" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="assigned"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Meine Kurse" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="mylearnings"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Favoriten" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="favorites"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Abgeschlossen" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="completed"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Manager" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="manager"/></customData>
+      </Link>
+
+      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+
+      <Link text="Profil" press=".onTopNavLink">
+        <customData><core:CustomData key="route" value="profile"/></customData>
+      </Link>
+
     </HBox>
+
 
     <!-- 3) robuster Fullscreen-Container für Routing -->
     <App id="appNav" height="100%" width="100%">
