@@ -9,11 +9,10 @@ sap.ui.define([
   "sap/m/Label",
   "sap/m/Input",
   "sap/m/MessageToast",
-  "sap/ui/model/json/JSONModel",
   "sap/m/Avatar"
 ], function (
   Controller, ResponsivePopover, List, StandardListItem, CustomData,
-  Dialog, Button, Label, Input, MessageToast, JSONModel, Avatar
+  Dialog, Button, Label, Input, MessageToast, Avatar
 ) {
   "use strict";
 
@@ -22,34 +21,41 @@ sap.ui.define([
   return Controller.extend("agilh.controller.App", {
 
     onInit: function () {
-      // Avatar-Initialen nach Login-Status setzen
+      // Avatar/Profil initial setzen
       this._refreshAvatar();
+
+      // Events sicherheitshalber direkt an die ShellBar hängen
+      var shell = this.byId("shell");
+      if (shell) {
+        shell.attachAvatarPressed(this.onAvatarPressed, this);
+        shell.attachHomeIconPressed(this.onHomePressed, this);
+      }
     },
 
     // -------- ShellBar: Avatar gedrückt --------
     onAvatarPressed: function (e) {
-      const src = e.getSource();
+      // immer den Avatar als Anker verwenden
+      var shell  = this.byId("shell");
+      var opener = (shell && shell.getProfile) ? shell.getProfile() : e.getSource();
 
       if (!this._oProfilePopover) {
-        // einmalig bauen
-        const list = new List({ width: "16rem" });
+        const list = new List({ width: "15rem" });
         this._oProfileList = list;
 
         this._oProfilePopover = new ResponsivePopover({
           showHeader: false,
-          placement: "BottomEnd",
+          placement: "Bottom",
+          contentWidth: "15.1rem",
           content: [list]
         });
         this.getView().addDependent(this._oProfilePopover);
       }
 
-      // Liste je nach Login-State auffüllen
       this._rebuildProfileList();
-
-      this._oProfilePopover.openBy(src);
+      this._oProfilePopover.openBy(opener);
     },
 
-    // -------- Popover-Inhalte (abhängig vom Status) --------
+    // -------- Popover-Inhalte --------
     _rebuildProfileList: function () {
       const list = this._oProfileList;
       list.removeAllItems();
@@ -66,35 +72,36 @@ sap.ui.define([
         add("Mein Profil", "sap-icon://person-placeholder", "profile");
         add("Abmelden",    "sap-icon://log",                "logout");
       } else {
-        add("Anmelden",                "sap-icon://log",          "login");
-        add("Mit SAP ID registrieren", "sap-icon://add-employee", "sapid");
+        add("Anmelden",                 "sap-icon://log",          "login");
+        add("Mit SAP ID registrieren",  "sap-icon://add-employee", "sapid");
       }
     },
 
     _onProfileAction: function (e) {
       const action = e.getSource().getCustomData().find(c => c.getKey() === "action").getValue();
+
       if (action === "profile") {
         this.getOwnerComponent().getRouter().navTo("profile");
         this._oProfilePopover && this._oProfilePopover.close();
+
       } else if (action === "logout") {
         localStorage.removeItem(LS_KEY);
         MessageToast.show("Abgemeldet");
         this._refreshAvatar();
         this._oProfilePopover && this._oProfilePopover.close();
+
       } else if (action === "login") {
         this._openLoginDialog();
+
       } else if (action === "sapid") {
         MessageToast.show("SAP ID Registrierung (Stub) – später implementieren");
-        // z.B. window.open("https://me.sap.com/c/identity", "_blank", "noopener");
       }
     },
 
     // -------- Login-Dialog --------
     _openLoginDialog: function () {
-      if (this._oLoginDlg) {
-        this._oLoginDlg.open();
-        return;
-      }
+      if (this._oLoginDlg) { this._oLoginDlg.open(); return; }
+
       const inp = new Input({ width: "100%", placeholder: "E-Mail oder Benutzername" });
 
       this._oLoginDlg = new Dialog({
@@ -112,13 +119,10 @@ sap.ui.define([
             if (!id) { MessageToast.show("Bitte E-Mail oder Benutzername eingeben"); return; }
 
             const user = await this._lookupUser(id);
-            if (!user) {
-              MessageToast.show("Nutzer nicht gefunden");
-              return;
-            }
-            // Login speichern
+            if (!user) { MessageToast.show("Nutzer nicht gefunden"); return; }
+
             localStorage.setItem(LS_KEY, JSON.stringify(user));
-            MessageToast.show("Willkommen, " + (user.displayName || user.username || user.email));
+            MessageToast.show("Willkommen, " + (user.name || user.email));
             this._refreshAvatar();
             this._oLoginDlg.close();
             this._oProfilePopover && this._oProfilePopover.close();
@@ -126,47 +130,72 @@ sap.ui.define([
         }),
         endButton: new Button({ text: "Abbrechen", press: () => this._oLoginDlg.close() })
       });
+
       this.getView().addDependent(this._oLoginDlg);
       this._oLoginDlg.open();
     },
 
-    // -------- Nutzerprüfung (API / Fallback) --------
+    // -------- Nutzerprüfung gegen data.json --------
     _lookupUser: async function (identifier) {
-      const users = await this._loadUsers();
-      const id = identifier.toLowerCase();
-      return users.find(u =>
-        (u.email && u.email.toLowerCase() === id) ||
-        (u.username && u.username.toLowerCase() === id)
-      ) || null;
-    },
+      const users = await this._getUsersFromDataModel();
+      const q = (identifier || "").toString().toLowerCase().trim();
 
-    _loadUsers: function () {
-      if (this._usersPromise) return this._usersPromise;
+      const norm = s => (s || "").toString().toLowerCase().trim();
 
-      this._usersPromise = new Promise((resolve) => {
-        const model = new JSONModel();
-        model.attachRequestCompleted(() => {
-          const data = model.getData();
-          // erwartet Array; sonst Fallback
-          if (Array.isArray(data)) { resolve(data); }
-          else if (data && Array.isArray(data.users)) { resolve(data.users); }
-          else resolve(this._fallbackUsers());
-        });
-        model.attachRequestFailed(() => resolve(this._fallbackUsers()));
-        // versucht lokale Fake-API (ui5-servestatic /api → mockdata)
-        model.loadData("/api/users.json");
+      const match = users.find(u => {
+        const email   = norm(u.email);
+        const prefix  = (email.split("@")[0] || "").trim();
+        const uname   = norm(u.username) || norm(u.user_name) || norm(u.login) || prefix;
+        const name    = norm(u.name) || norm(u.displayName);
+
+        return q === email || q === prefix || q === uname || q === name;
       });
 
-      return this._usersPromise;
+      // Debug (einmalig hilfreich): console.log({q, found: !!match, total: users.length, sample: users.slice(0,3)});
+      return match ? {
+        email: match.email || "",
+        name: match.name || match.displayName || match.username || match.user_name || match.login || match.email,
+        role: match.role || "user",
+        avatar_url: match.avatar_url || ""
+      } : null;
     },
 
-    _fallbackUsers: function () {
-      // einfache Demo-Liste
-      return [
-        { id: "u001", email: "ali.mueller@contoso.net", username: "ali",  displayName: "Ali Müller" },
-        { id: "u002", email: "sara.khan@example.com",   username: "sara", displayName: "Sara Khan" }
-      ];
+    _getUsersFromDataModel: function () {
+      return new Promise((resolve) => {
+        const m = this.getOwnerComponent().getModel("data");
+        if (!m) return resolve([]);
+
+        const pick = () => {
+          const d = m.getData && m.getData();
+          // Hauptpfad
+          let arr = d && d.master_data && Array.isArray(d.master_data.users) ? d.master_data.users : null;
+
+          // Fallback: irgendein Array mit E-Mail-Feldern finden (nur wenn nötig)
+          if (!arr && d && typeof d === "object") {
+            for (const k of Object.keys(d)) {
+              const v = d[k];
+              if (v && typeof v === "object") {
+                const maybe = v.users || v.user || v.people || null;
+                if (Array.isArray(maybe) && maybe.length && typeof maybe[0] === "object" && ("email" in maybe[0])) {
+                  arr = maybe; break;
+                }
+              }
+            }
+          }
+          resolve(Array.isArray(arr) ? arr : []);
+        };
+
+        // Schon da?
+        const d = m.getData && m.getData();
+        if (d && Object.keys(d).length) { pick(); return; }
+
+        // Auf Laden warten
+        const done = () => { m.detachRequestCompleted(done, this); pick(); };
+        m.attachRequestCompleted(done, this);
+        m.attachRequestFailed(() => resolve([]), this);
+      });
     },
+
 
     // -------- Avatar/State Utilities --------
     _getCurrentUser: function () {
@@ -175,39 +204,51 @@ sap.ui.define([
     },
 
     _refreshAvatar: function () {
-      const shell = this.byId("shell");
-      let avatar = shell.getProfile && shell.getProfile();
-      const user = this._getCurrentUser();
+      var shell = this.byId("shell");
+      if (!shell) return;
 
-      const initials = user ? this._initials(user.displayName || user.username || user.email) : "AG";
+      var avatar = shell.getProfile && shell.getProfile();
+      var user = this._getCurrentUser();
 
-      if (avatar) {
-        avatar.setInitials(initials);
-      } else {
-        avatar = new Avatar({ initials, size: "S" });
+      if (!avatar) {
+        avatar = new Avatar({ size: "S" });
+        // Fallback: Avatar selbst klickbar machen
+        avatar.attachPress(this.onAvatarPressed, this);
         shell.setProfile(avatar);
+      }
+
+      if (user) {
+        const txt = user.name || user.email || "";
+        avatar.setInitials(this._initials(txt));
+        avatar.setSrc(user.avatar_url || "");
+      } else {
+        avatar.setSrc("");
+        avatar.setInitials("AG");
       }
     },
 
     _initials: function (s) {
       if (!s) return "AG";
       const parts = s.replace(/@.*/, "").split(/[.\s_-]+/).filter(Boolean);
-      const first = (parts[0] || "").charAt(0);
-      const second = (parts[1] || "").charAt(0);
-      return (first + second || first || "AG").toUpperCase();
+      const a = (parts[0] || "").charAt(0);
+      const b = (parts[1] || "").charAt(0);
+      return (a + b || a || "AG").toUpperCase();
     },
 
-    // -------- bereits vorhandene Handler-Stubs --------
+    // -------- vorhandene Handler --------
     onTopNavLink: function (e) {
       const cd = (e.getSource().getCustomData() || []).find(c => c.getKey && c.getKey() === "route");
       if (cd) this.getOwnerComponent().getRouter().navTo(cd.getValue());
     },
+
     onOpenExternal: function (e) {
       const cd = (e.getSource().getCustomData() || []).find(c => c.getKey && c.getKey() === "url");
       const url = cd && cd.getValue();
       if (url) window.open(url, "_blank", "noopener");
     },
+
     onSearchPressed: function () {},
+
     onHomePressed: function () {
       this.getOwnerComponent().getRouter().navTo("landing");
     }
