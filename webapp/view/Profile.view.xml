@@ -1,7 +1,62 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.Profile">
-  <Page title="Profil">
+<mvc:View
+  controllerName="agilh.controller.Profile"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <Page title="Mein Profil" showNavButton="false">
     <content>
-      <ObjectHeader title="Dein Profil" number="{landing>/user/name}" numberUnit="{landing>/user/email}" />
+
+      <!-- Block: Nicht eingeloggt -->
+      <VBox class="sapUiLargeMargin" visible="{= !${profile>/loggedIn} }">
+        <Title text="Bitte anmelden" level="H3" />
+        <Text text="Melde dich an, um dein Profil und deinen Lernfortschritt zu sehen." />
+        <Toolbar class="sapUiSmallMarginTop" design="Transparent">
+          <Button text="Zum Login" type="Emphasized" press=".onLoginShortcut" />
+        </Toolbar>
+      </VBox>
+
+      <!-- Block: Profil + abgeschlossene Kurse -->
+      <VBox class="sapUiLargeMargin" visible="{profile>/loggedIn}">
+        <!-- User Header -->
+        <HBox alignItems="Center" class="sapUiSmallMarginBottom">
+          <Avatar src="{profile>/user/avatar_url}" initials="{profile>/user/initials}" size="L" />
+          <VBox class="sapUiSmallMarginBegin">
+            <Title text="{profile>/user/name}" level="H3" />
+            <Text text="{profile>/user/email}" />
+            <ObjectStatus text="{profile>/user/role}" state="Information" />
+          </VBox>
+        </HBox>
+
+        <!-- Stats / Info -->
+        <Toolbar design="Transparent" class="sapUiTinyMarginTop sapUiTinyMarginBottom">
+          <Title text="Abgeschlossene Kurse" level="H4" />
+          <ToolbarSpacer/>
+          <Label text="{profile>/completedCount} Kurse" />
+        </Toolbar>
+
+        <!-- Liste: Abgeschlossene Kurse -->
+        <List id="completedList" items="{profile>/completed}">
+          <CustomListItem>
+            <VBox class="sapUiSmallMargin">
+              <HBox justifyContent="SpaceBetween" alignItems="Center">
+                <Title text="{profile>courseTitle}" level="H5" />
+                <ObjectStatus text="{= ${profile>progress} ? ${profile>progress} + '%' : '' }" state="Success" visible="{= !!${profile>progress} }" />
+              </HBox>
+              <Text text="{profile>courseSubtitle}" />
+              <Text text="{path: 'profile>completedAt', formatter: '.fmtDate'}" visible="{= !!${profile>completedAt} }" />
+            </VBox>
+          </CustomListItem>
+        </List>
+
+        <MessageStrip
+          text="Keine abgeschlossenen Kurse gefunden."
+          type="Information"
+          showIcon="true"
+          class="sapUiSmallMarginTop"
+          visible="{= ${profile>/completedCount} === 0 }" />
+      </VBox>
+
     </content>
   </Page>
 </mvc:View>
