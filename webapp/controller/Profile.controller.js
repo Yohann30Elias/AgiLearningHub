@@ -26,18 +26,43 @@ sap.ui.define([
       });
       this.getView().setModel(vm, "profile");
 
-      // Session prüfen
+      // ROUTE-HOOK (Option B): bei jedem Aufruf der Profil-Route neu laden
+      this._oRouter = this.getOwnerComponent().getRouter();
+      if (this._oRouter && this._oRouter.getRoute) {
+        this._oRouter.getRoute("profile").attachPatternMatched(this._onRouteMatched, this);
+      }
+
+      // Initialer Aufbau (falls direkt auf Profile landet und Daten schon da sind)
       var current = this._getCurrentUser();
-      if (!current) {
+      var m = this.getOwnerComponent().getModel("data");
+      if (!current || !m) return;
+
+      if (m.getData && Object.keys(m.getData() || {}).length) {
+        this._buildProfile(current);
+      } else {
+        var done = () => { m.detachRequestCompleted(done, this); this._buildProfile(current); };
+        m.attachRequestCompleted(done, this);
+      }
+    },
+
+    // Route „profile“ wurde getroffen → Profil immer frisch bauen
+    _onRouteMatched: function () {
+      var vm = this.getView().getModel("profile");
+      var current = this._getCurrentUser();
+      var m = this.getOwnerComponent().getModel("data");
+
+      if (!current || !m) {
+        // sauber zurücksetzen, wenn nicht eingeloggt
         vm.setProperty("/loggedIn", false);
+        vm.setProperty("/user", { name:"", email:"", role:"", avatar_url:"", initials:"" });
+        vm.setProperty("/completed", []);
+        vm.setProperty("/completedCount", 0);
         return;
       }
 
-      // Falls Datenmodel schon da: sofort verarbeiten, sonst warten
-      var m = this.getOwnerComponent().getModel("data");
-      if (m && m.getData && Object.keys(m.getData()||{}).length) {
+      if (m.getData && Object.keys(m.getData() || {}).length) {
         this._buildProfile(current);
-      } else if (m) {
+      } else {
         var done = () => { m.detachRequestCompleted(done, this); this._buildProfile(current); };
         m.attachRequestCompleted(done, this);
       }
@@ -145,10 +170,9 @@ sap.ui.define([
     },
 
     // „Zum Login“-Button: einfach Avatar-Popover öffnen (wenn möglich),
-    // sonst zur Landing navigieren.
+    // sonst Hinweis.
     onLoginShortcut: function () {
       try {
-        // ShellBar aus Root holen und das Avatar-Pressed auslösen
         var shell = this.getOwnerComponent().getRootControl().byId("shell");
         if (shell && shell.fireAvatarPressed) {
           shell.fireAvatarPressed(); // öffnet dein bestehendes Login-Popover

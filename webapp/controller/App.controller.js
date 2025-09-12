@@ -89,6 +89,7 @@ sap.ui.define([
         MessageToast.show("Abgemeldet");
         this._refreshAvatar();
         this._oProfilePopover && this._oProfilePopover.close();
+        this._afterAuthChange();
 
       } else if (action === "login") {
         this._openLoginDialog();
@@ -126,6 +127,7 @@ sap.ui.define([
             this._refreshAvatar();
             this._oLoginDlg.close();
             this._oProfilePopover && this._oProfilePopover.close();
+            this._afterAuthChange();
           }
         }),
         endButton: new Button({ text: "Abbrechen", press: () => this._oLoginDlg.close() })
@@ -241,11 +243,34 @@ sap.ui.define([
       if (cd) this.getOwnerComponent().getRouter().navTo(cd.getValue());
     },
 
+    onMenuSelect: function (oEvent) {
+      const item = oEvent.getParameter("item");
+      if (!item) return;
+
+      // 1) via CustomData-API
+      const cd = (item.getCustomData() || []).find(c => c.getKey && c.getKey() === "route");
+      const route = cd && cd.getValue();
+
+      // 2) Fallback: die bequeme Kurzform (UI5 Control#data)
+      // const route = item.data && item.data("route");
+
+      if (route) {
+        this.getOwnerComponent().getRouter().navTo(route);
+      }
+    },
+
     onOpenExternal: function (e) {
       const cd = (e.getSource().getCustomData() || []).find(c => c.getKey && c.getKey() === "url");
       const url = cd && cd.getValue();
       if (url) window.open(url, "_blank", "noopener");
     },
+
+    _afterAuthChange: function () {
+      this.getOwnerComponent().getRouter().navTo("landing", {}, true); // true = History-Eintrag ersetzen
+      // Optional: an den Anfang scrollen
+      try { window.scrollTo({ top: 0, behavior: "auto" }); } catch(e) {}
+    },
+
 
     onSearchPressed: function () {},
 
