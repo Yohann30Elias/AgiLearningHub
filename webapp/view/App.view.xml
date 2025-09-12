@@ -1,68 +1,63 @@
 <mvc:View
+  controllerName="agilh.controller.App"
   xmlns:mvc="sap.ui.core.mvc"
-  xmlns="sap.m"
-  xmlns:f="sap.f"
-  xmlns:core="sap.ui.core"
-  controllerName="agilh.controller.App">
+  xmlns="sap.f"
+  xmlns:m="sap.m"
+  xmlns:core="sap.ui.core">
 
-  <VBox fitContainer="true">
-    <!-- 1) eine ShellBar -->
-    <f:ShellBar id="shell" class="agilita-shellbar" title="AGI Learning Hub" />
+  <m:VBox fitContainer="true">
 
-    <HBox class="agilita-nav" justifyContent="Start" alignItems="Center">
+    <!-- ShellBar mit secondTitle + Menü -->
+    <ShellBar
+      id="shell"
+      title="AGI Learning Hub"
+      secondTitle="Explore · Learn · Grow · Rise"
+      homeIcon="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1OTUuMjggMTU2Ljg2Ij4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjMWQxZDFiOwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICNhYjFhMTc7CiAgICAgIH0KICAgIDwvc3R5bGU+CiAgPC9kZWZzPgogIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTE1MS42NywyNC45Yy0uOTctMi4yOC0yLjM0LTQuMzEtNC4wNy02LjA0LTEuNzEtMS43LTMuNzEtMy4wNy02LjA2LTQuMS0yLjM4LS45MS00Ljc2LTEuMzctNy4wNy0xLjM3SDQxLjU4Yy0yLjM0LDAtNC43LjQ3LTcuMDgsMS40LTIuMjguOTgtNC4zMSwyLjM0LTYuMDQsNC4wNy0xLjcyLDEuNzMtMy4wOSwzLjc2LTQuMDksNi4wOS0uOTEsMi4zMS0xLjM3LDQuNjgtMS4zNyw3LjAzdjkyLjljMCwyLjMzLjQ2LDQuNywxLjQxLDcuMTcsMSwyLjI1LDIuMzYsNC4yNiw0LjA2LDUuOTYsMS43MywxLjczLDMuNzYsMy4xLDYuMDksNC4xLDIuMzIuOTIsNC42OCwxLjM4LDcuMDMsMS4zOGg4OC43OGwtNi42Mi0xMi40NEg0MS41OGMtLjgsMC0xLjU3LS4xNi0yLjM2LS40OC0uNzQtLjMtMS4zOC0uNzMtMS45NS0xLjI5bC0uNTQtLjY1Yy0uMzEtLjM5LS41OC0uODQtLjgyLTEuMzctLjMyLS43OC0uNDktMS41Ny0uNDktMi4zNlYzMS45OGMwLS43OS4xNi0xLjU2LjQ5LTIuMzYuMjgtLjY3LjczLTEuMzMsMS4zNS0xLjk1LjYzLS42MiwxLjI4LTEuMDgsMS45NS0xLjM2Ljc5LS4zMiwxLjU2LS40OCwyLjM2LS40OGg5Mi45Yy44LDAsMS41Ny4xNiwyLjI5LjQ2LjYxLjI4LDEuMDYuNTQsMS40My44NGwuNjUuNTVjLjU3LjU3Ljk5LDEuMiwxLjMsMS45Ni4zMy43OS40OSwxLjU2LjQ5LDIuMzV2MzQuODhsMTIuNDQsMjIuNVYzMS45OGMwLTIuMzUtLjQ2LTQuNzItMS40LTcuMDlaIi8+CiAgPGc+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0yNzguMDQsNTcuNjFjLS4zMS0uMjMtLjgzLS42MS0xLjM0LS43MS0uNTYtLjE4LTEuMTktLjI3LTEuODgtLjI3aC00LjhjLS43NSwwLTEuMzcuMDgtMS43Mi4yMS0uNzMuMTYtMS4yNS41My0xLjgzLDEtLjQ3LjQ4LS43LDEuMDYtLjksMS41Ni0uMTkuNTYtLjI4LDEuMi0uMjgsMS44OXY2MC4wOGMwLC42OS4wOSwxLjMyLjMyLDIsLjE2LjM5LjM5Ljk4LDEuMTUsMS43LjMxLjIzLjgzLjYxLDEuMzIuNjkuNTguMTksMS4xOS4yOCwxLjk0LjI4aDQuOGMxLjUxLDAsMi42Ny0uNCwzLjQ3LTEuMi43OS0uNzksMS4yLTEuOTcsMS4yLTMuNDd2LTYwLjA4YzAtLjctLjA5LTEuMzMtLjMzLTIuMDEtLjE2LS40LS4zOS0uOTctMS4xMi0xLjY3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMjQ0LjkyLDU3LjhjLS40OS0uNDgtMS4wNC0uNzktMS42Ni0uOTMtLjYyLS4yLTEuMzEtLjI1LTEuNzktLjI1aC00OS4yYy0xLjc0LDAtMy4zOC4xMi00LjkyLjM3LTEuNDkuMTctMy4wMi41Mi00LjcyLDEuMDktMS42Ny41OC0zLjAxLDEuMTctNC4xMSwxLjgtMS4yNi42My0yLjUxLDEuNDUtNC4wOSwyLjc0LTEuMDYuODItMi4wOCwxLjgtMy4wMywyLjktMS4wNCwxLjE4LTEuNzgsMi40Mi0yLjQxLDMuNTUtLjU5LDEuMTktMS4wNiwyLjQ2LTEuMzgsMy43NC0uMzIsMS4yLS40OCwyLjU5LS40OCw0LjF2MjguODRjMCwxLjQ5LjE2LDIuODguNDgsNC4xNi4zNCwxLjI5LjgsMi41MiwxLjQsMy43Mi43MSwxLjM1LDEuNDcsMi40NywyLjM0LDMuNDYuODcsMS4wNiwxLjk2LDIuMTEsMy4yNCwzLjExLDEuMzUsMS4wNywyLjYsMS45MSwzLjgsMi41NCwxLjI1LjY5LDIuNTksMS4yNyw0LjI0LDEuODQsMS40My40OSwyLjk5Ljg4LDQuNzIsMS4xNiwxLjc5LjIsMy4zNi4zLDQuOTIuM2g0OS4yYy41NiwwLDIuMjgsMCwzLjI1LTEuMDEuNy0uNTMuOTgtMS4yNCwxLjE5LTEuNzguMTktLjU3LjI4LTEuMi4yOC0xLjg4di0zMS41OWwtLjAzLS40M2MtLjA3LS40My0uMTUtLjktLjQzLTEuNTctLjE2LS4zMS0uNC0uNzItLjgtMS4xMS0uNDItLjQyLS44OS0uNzMtMS41MS0uOTgtLjU4LS4yLTEuMjItLjI5LTEuOTYtLjI5bC0yOS42Ni4wNmMtLjQ5LDAtMS4xNy4wNS0xLjc5LjI1LS42My4xNC0xLjE3LjQ0LTEuNDQuNzUtLjcyLjUyLTEsMS4yNS0xLjIxLDEuNzgtLjE5LjU2LS4yOCwxLjItLjI4LDEuOXYyLjM5YzAsLjc1LjA5LDEuMzguMzMsMi4wNy4xOC40NS40My45Ny45MywxLjQxLjUxLjU2LDEuMTEuOCwxLjUxLjk3LjU4LjIsMS4yLjI5LDEuOTYuMjloMjAuMTN2MTYuOThoLTM5LjY3Yy0uNzgsMC0xLjU1LS4wNS0yLjI3LS4xNi0uODEtLjExLTEuNDItLjI2LTIuMDgtLjUyLS42Ni0uMjEtMS4yLS40My0xLjg0LS44LS41My0uMjctMS4xMS0uNjQtMS42Ni0xLjEtLjU1LS40NS0xLS45LTEuMzMtMS4yNi0uMzktLjQ5LS43NC0uOTgtMS4wMy0xLjUxLS4yNC0uNDQtLjQyLS45My0uNTMtMS4zNC0uMS0uNTktLjItMS4yMy0uMi0xLjgydi0yOC44NGMwLS41OC4xLTEuMi4xNy0xLjYuMTYtLjY1LjM1LTEuMTUuNTMtMS40OC4yOS0uNDguNjItMS4wMSwxLjA2LTEuNTIuNC0uNDkuODktLjkzLDEuMzMtMS4zMy41NS0uNDYsMS4xNy0uOCwxLjY1LTEuMDkuNi0uMjksMS4yMS0uNjEsMS44NS0uODEuNjYtLjIsMS4zNi0uNDEsMi4wOC0uNTEuNzItLjExLDEuNS0uMTYsMi4yNy0uMTZoNDkuMmMuNzQsMCwxLjM3LS4wOSwyLjA3LS4zMy40LS4xNi45My0uNDEsMS40MS0uODguNTEtLjUyLjc1LTEuMDIuOTYtMS41Ny4xOS0uNTcuMjgtMS4yLjI4LTEuODh2LTIuNDZjMC0uNjktLjA5LTEuMzMtLjMzLTIuMDEtLjE3LS40My0uNDItLjk0LS45NS0xLjQ3WiIvPgogICAgPHBhdGggY2xhc3M9ImNscy0xIiBkPSJNMTUxLjksMTE5LjkxbC0zMC01NC43NmMtLjA1LS4xNS0uMTYtLjQtLjMyLS43MmwtLjk0LTEuODNjLTEuODgtMy41NS0yLjM1LTQuMzUtMi43Ny00Ljc4bC0uMzgtLjMyYy0uMTktLjE1LS40NC0uMzYtLjc5LS41M2wtLjQ1LS4xN2MtLjI4LS4wNy0uNzEtLjE3LTEuMjYtLjE3aC00LjhjLS41NSwwLS45OC4xMS0xLjI2LjE3bC0uNDUuMTdjLS4zNS4xNy0uNjEuMzktLjk0LjY1bC0uMzcuMzRjLS42MS43My0zLjI3LDUuODktMy4zLDUuOTZsLTI5LjQ5LDUzLjM1LS4xOS4zOWMtLjA5LjE5LS4xOC4zOC0uMjYuNTNsLS4xOC40Yy0uMDguMjQtLjE2LjQ0LS4yNC42bC0uNDYsMi4yM2MwLC42OS4wOSwxLjMyLjMyLDIsLjE2LjQyLjQxLjk1LDEuMTQsMS42NC4zMS4yMy44My42MSwxLjMzLjcuNTcuMTksMS4yLjI4LDEuOTQuMjhoMy41N2MxLjA5LDAsMi4yLS40MiwyLjk4LTEuMDYuNDktLjMyLjk2LS43NiwxLjU3LTEuNDguMzgtLjQ0LjgtLjkzLDEuMjgtMS42N2wzLjIyLTYuMDZjNS45My0xMS4xNCwxMi4zNC0yMy4xOSwxOC43MS0zNS4yNGwzLjQ2LTYuNTMsMS42MSwzLjA4YzcuNDUsMTMuOTcsMTQuODUsMjcuOSwyMS4yMiwzOS44OGwyLjcsNS4wNWMuMzcuNTcuODEsMS4wNywxLjI2LDEuNi41My42MSwxLDEuMDYsMS4xNiwxLjExLjQ0LjQ1LDEsLjgsMi4wMiwxLjE2LjQzLjA4Ljg1LjE2LDEuMjcuMTZoMy41N2MxLjU3LDAsMi43Mi0uMzksMy41NC0xLjIuNDgtLjQ4LjctMS4wNS45MS0xLjU4LjE5LS41Ny4yOC0xLjIuMjgtMS44OCwwLS4yOS0uMDEtLjYtLjE2LTEuMTUtLjAyLS4wNy0uMDQtLjE4LS4wOC0uMzFaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik00OTYuNDcsNjcuNDRsLjQ3LS40N2MuMjYtLjM2LjQ2LS43Mi43LTEuMzIuMTktLjU3LjI5LTEuMi4yOS0xLjl2LTIuNDZjMC0uNy0uMS0xLjM0LS4zNC0yLjAyLS4xNC0uMzQtLjMzLS43NS0uNjUtMS4ybC0uNDgtLjQ4Yy0uMzMtLjI0LS44My0uNi0xLjMzLS43LS41Ny0uMTgtMS4yLS4yNy0xLjkzLS4yN2gtNjkuNjFjLS40OSwwLTEuMTguMDQtMS44LjI1LS42My4xNS0xLjIuNDctMS42OS45Ny0uNS41MS0uNzksMS4xMy0uOTYsMS41Ni0uMTkuNTctLjI5LDEuMjEtLjI5LDEuOXYyLjQ2YzAsMS40My40NCwyLjY1LDEuMjYsMy40Ny41MS41MSwxLjEuNzUsMS40Ny44OC42Ny4yNiwxLjQ2LjMyLDIuMDEuMzJoMjcuNzN2NTIuOTVjMCwxLjUzLjM5LDIuNjYsMS4yLDMuNDcsMS4yLDEuMiwyLjkxLDEuMiwzLjQ3LDEuMmg0Ljc5Yy41NiwwLDIuMjgsMCwzLjQ3LTEuMi44NC0uODQsMS4yNi0yLjAxLDEuMjYtMy40N3YtNTIuOTVoMjcuNjhjLjczLDAsMS4zNy0uMDksMi4wOS0uMzQuMzItLjEzLjc1LS4zMywxLjE5LS42NVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTU3My4yOCwxMTkuNWMtLjEtLjM3LS4yNS0uNzItLjQzLTEuMDYtLjEyLS4zMy0uMjktLjY4LS41NC0xLjE5bC0yOS4xMS01Mi42NmMtLjEtLjE4LS4yNS0uNDctLjQ4LS45bC0uNjYtMS4yNWMtMS44NC0zLjQ3LTIuMjctNC4yLTIuNjktNC42Mi0uMzQtLjM0LS43NS0uNjMtMS4xNi0uODVsLS40OC0uMThjLS4yOS0uMDctLjctLjE2LTEuMjQtLjE2aC00LjhjLS41LDAtLjkzLjExLTEuMi4xN2wtLjQzLjE2Yy0uNTEuMjUtLjkxLjU5LTEuMTkuODYtLjQ4LjQ4LTEuNjUsMi41My0zLjQ5LDYuMDlsLTI5LjQ3LDUzLjM0Yy0uMi40LS40MS44OC0uNDgsMS4wNy0uMjQuNDgtLjQuOS0uNDIsMS4wMy0uMTIuMjktLjI3LjcyLS4zMiwxLjIzLS4wNy4zNS0uMDcuNjUtLjA3Ljg0LDAsLjcuMDksMS4zNC4yMSwxLjYzLjEzLjY2LjQ2LDEuMjYsMSwxLjguNS40OCwxLjE2Ljg0LDEuNTguOS41Ni4xOCwxLjE5LjI4LDEuODguMjhoMy42M2MxLjA0LDAsMi4wNC0uMzYsMi45OC0xLjA2LjQ3LS4zMi45NC0uNzUsMS40Ny0xLjM3LjQtLjQ3LjgtMSwxLjMxLTEuNzgsNi44NC0xMi43NSwxNC4zOC0yNy4wMSwyMS45My00MS4zbDMuNTEtNi41MywxMS44NywyMi4zMWM0LjgzLDkuMSw5LjQ1LDE3LjgsMTMuNjgsMjUuNzEuNC42LjgxLDEuMTMsMS4yMSwxLjYuNTIuNjEuOTgsMS4wNCwxLjMsMS4yNS41MS40Mi45OC43MSwxLjg3LDEuMDIuNDMuMDguODYuMTYsMS4yOS4xNmgzLjYyYy45NywwLDIuNC0uMTIsMy40Ni0xLjE4LjUyLS41MS44Mi0xLjE2Ljk1LTEuNWwuMTEtLjQzYy4wNy0uNDUuMTYtLjk3LjE2LTEuNTZsLjAyLTEuMDgtLjM2LS43OVoiLz4KICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTQwNC4wOSw1Ny42Yy0uMzEtLjIzLS44Mi0uNjEtMS4zMy0uNy0uNTYtLjE4LTEuMi0uMjctMS44OC0uMjdoLTQuOGMtLjc0LDAtMS4zNy4wOS0xLjcxLjIxLS43Mi4xNS0xLjIzLjUyLTEuNTYuNzZsLS40OC40N2MtLjI1LjM1LS40Ni43Mi0uNywxLjM0LS4xOC41Ni0uMjcsMS4xOS0uMjcsMS44OHY2MC4wOGMwLC42OC4wOSwxLjMyLjMyLDIuMDEuMTYuNDEuMzkuOTcsMS4xOCwxLjcxLjMuMjIuODEuNiwxLjI5LjY3LjU3LjE5LDEuMi4yOCwxLjkzLjI4aDQuOGMxLjUyLDAsMi42OS0uNDEsMy40Ni0xLjE5LjgtLjc5LDEuMjEtMS45NywxLjIxLTMuNDh2LTYwLjA4YzAtLjY5LS4xLTEuMzItLjM2LTIuMTEtLjE2LS4zOC0uMzgtLjktMS4xLTEuNTlaIi8+CiAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik0zNzYuODUsMTE1LjVjLS41Mi0uNTItMS4wNC0uNzYtMS41Ny0uOTctLjU3LS4yLTEuMi0uMjktMS45Ni0uMjloLTQ5LjJjLS43NywwLTEuNTUtLjA1LTIuMjctLjE2LS44MS0uMTEtMS40My0uMjYtMi4wOC0uNTItLjY2LS4yMS0xLjIxLS40My0xLjg0LS44LS4yOS0uMTUtLjU3LS4zMS0uODQtLjQ5bC0uODYtLjY4Yy0uNDItLjMtLjg4LS43NC0xLjI5LTEuMTktLjM5LS40OS0uNzMtLjk4LS45NS0xLjM3LS4yNC0uNTQtLjQ3LTEuMDQtLjU4LTEuNjUtLjE1LS41OC0uMjMtMS4xNi0uMjMtMS42NXYtNDQuNDZjMC0uNy0uMS0xLjMzLS4yMi0xLjY1LS4xMy0uNjYtLjQ4LTEuMzEtMS0xLjgzLS40OS0uNDgtMS4xNC0uODMtMS41Ny0uOTEtLjU2LS4xOC0xLjE5LS4yNy0xLjg4LS4yN2gtNC44Yy0uNzMsMC0xLjM3LjA5LTEuNzIuMjEtLjY0LjEzLTEuMjIuNDYtMS41NS44LS42OS41My0uOTYsMS4yMy0xLjE4LDEuNzYtLjE5LjU2LS4yOCwxLjItLjI4LDEuODl2NDQuNDZjMCwxLjIxLjE0LDIuNS40OCw0LjE2LjM0LDEuMjkuOCwyLjUyLDEuNCwzLjcyLjYxLDEuMTYsMS4zNSwyLjI1LDIuMzQsMy40Ni44OCwxLjA2LDEuOTcsMi4xMSwzLjQ5LDMuMzEsMS4zLDEuMDEsMi41LDEuNzksMy41OCwyLjMzLDEuMi42OSwyLjUxLDEuMjYsNC4yMiwxLjg2LDEuNDMuNDksMi45OC44OCw0LjcxLDEuMTYsMS44LjIsMy4zNi4zLDQuOTIuM2g0OS4yYzEuNTgsMCwyLjc0LS4zOSwzLjUzLTEuMi40OC0uNDkuNzEtMS4wNi45Mi0xLjU5LjE5LS41Ny4yOS0xLjIuMjktMS44OHYtMi40YzAtLjc0LS4xLTEuMzgtLjMzLTIuMDctLjE4LS40My0uNDItLjk0LS44OC0xLjRaIi8+CiAgPC9nPgo8L3N2Zz4="
+      showSearch="true"
+      searchButtonPressed=".onSearchPressed"
+      avatarPressed=".onAvatarPressed">
 
-      <Link text="Landing" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="landing"/></customData>
-      </Link>
+      <!-- Dropdown-Menü rechts am Titel -->
+      <menu>
+        <m:Menu itemSelected=".onMenuSelect">
+          <m:items>
+            <m:MenuItem text="Home">
+              <m:customData><core:CustomData key="route" value="landing"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Übersicht Kurse/Lernpfade">
+              <m:customData><core:CustomData key="route" value="catalog"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Zuweisungen">
+              <m:customData><core:CustomData key="route" value="assigned"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Meine Kurse">
+              <m:customData><core:CustomData key="route" value="mylearnings"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Favoriten">
+              <m:customData><core:CustomData key="route" value="favorites"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Abgeschlossen">
+              <m:customData><core:CustomData key="route" value="completed"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Manager">
+              <m:customData><core:CustomData key="route" value="manager"/></m:customData>
+            </m:MenuItem>
+            <m:MenuItem text="Profil">
+              <m:customData><core:CustomData key="route" value="profile"/></m:customData>
+            </m:MenuItem>
+          </m:items>
+        </m:Menu>
+      </menu>
 
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
+      <!-- Avatar rechts -->
+      <profile>
+        <Avatar initials="AG" size="S"/>
+      </profile>
+    </ShellBar>
 
-      <Link text="Übersicht" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="catalog"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Zuweisungen" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="assigned"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Meine Kurse" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="mylearnings"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Favoriten" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="favorites"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Abgeschlossen" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="completed"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Manager" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="manager"/></customData>
-      </Link>
-
-      <Text text="·" class="sapUiTinyMarginBegin sapUiTinyMarginEnd"/>
-
-      <Link text="Profil" press=".onTopNavLink">
-        <customData><core:CustomData key="route" value="profile"/></customData>
-      </Link>
-
-    </HBox>
-
-
-    <!-- 3) robuster Fullscreen-Container für Routing -->
-    <App id="appNav" height="100%" width="100%">
-      <layoutData><FlexItemData growFactor="1"/></layoutData>
-    </App>
-  </VBox>
+    <!-- Router-Container -->
+    <m:App id="appNav" height="100%" width="100%">
+      <m:layoutData><m:FlexItemData growFactor="1"/></m:layoutData>
+    </m:App>
+  </m:VBox>
 </mvc:View>
