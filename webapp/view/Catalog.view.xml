@@ -1,11 +1,97 @@
-<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="agilh.controller.Catalog">
+<mvc:View
+  controllerName="agilh.controller.Catalog"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core"
+  xmlns:l="sap.ui.layout">
+
   <Page title="Übersicht">
     <content>
-      <List growing="true" noDataText="(Kurse folgen)">
-        <items>
-          <StandardListItem title="Kurse &amp; Lernpfade - Platzhalter"/>
-        </items>
-      </List>
+
+      <!-- Filter / Suche -->
+      <VBox class="sapUiSmallMargin">
+        <Toolbar design="Transparent">
+          <SearchField id="sf"
+                       width="100%"
+                       placeholder="Suchen… (Titel, Themen)"
+                       showSuggestion="true"
+                       suggest=".onSuggest"
+                       suggestionItemSelected=".onSuggestionItemSelected"
+                       liveChange=".onLiveSearch"
+                       search=".onSearch"/>
+        </Toolbar>
+
+        <Toolbar design="Transparent">
+          <Label text="Typ" />
+          <Select id="typeSel"
+                  selectedKey="{catalog>/type}"
+                  change=".onTypeChange"
+                  class="sapUiTinyMarginBegin">
+            <items>
+              <core:Item key="all" text="Alle"/>
+              <core:Item key="course" text="Kurse"/>
+              <core:Item key="path" text="Lernpfade"/>
+            </items>
+          </Select>
+
+          <ToolbarSeparator/>
+
+          <Label text="Kategorien" />
+          <MultiComboBox id="catMCB"
+                         width="24rem"
+                         selectionChange=".onCategoryChange"
+                         class="sapUiTinyMarginBegin"
+                         items="{catalog>/categories}">
+            <core:Item key="{catalog>id}" text="{catalog>title}"/>
+          </MultiComboBox>
+
+          <ToolbarSpacer/>
+          <Text text="{= ${catalog>/filtered}.length + ' Einträge'}"/>
+        </Toolbar>
+      </VBox>
+
+      <!-- === Grid mit Cards (4/2/1 Spalten je nach Breakpoint) === -->
+      <l:Grid id="grid"
+              class="sapUiSmallMargin"
+              containerQuery="true"
+              defaultSpan="XL3 L3 M6 S12"
+              width="auto"
+              content="{catalog>/filtered}">
+
+        <Panel class="sapUiResponsiveContentPadding"
+               headerText="{catalog>title}">
+          <layoutData>
+            <l:GridData span="XL3 L3 M6 S12"/>
+          </layoutData>
+
+          <VBox>
+            <ObjectStatus text="{catalog>typeLabel}" state="Information"/>
+            <Text text="{catalog>subtitle}" wrapping="true"
+                  class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
+
+            <HBox justifyContent="SpaceBetween" alignItems="Center">
+              <Text text="{= ${catalog>number} ? ${catalog>number} + ' ' + (${catalog>numberUnit} || '') : '' }"/>
+
+              <HBox>
+                <Button text="Details" type="Transparent" press=".onItemPress">
+                  <customData>
+                    <core:CustomData key="type" value="{catalog>type}"/>
+                    <core:CustomData key="id"   value="{catalog>id}"/>
+                  </customData>
+                </Button>
+
+                <Button text="Start" type="Emphasized" class="sapUiTinyMarginBegin" press=".onStartPress">
+                  <customData>
+                    <core:CustomData key="type" value="{catalog>type}"/>
+                    <core:CustomData key="id"   value="{catalog>id}"/>
+                  </customData>
+                </Button>
+              </HBox>
+            </HBox>
+          </VBox>
+        </Panel>
+      </l:Grid>
+
     </content>
   </Page>
 </mvc:View>
