@@ -49,7 +49,7 @@
 
       <!-- Avatar rechts -->
       <profile>
-        <Avatar initials="AG" size="S"/>
+        <Avatar initials="AG"/>
       </profile>
     </ShellBar>
 

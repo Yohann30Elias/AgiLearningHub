@@ -5,89 +5,123 @@ sap.ui.define([
   "use strict";
 
   var ROTATE_MS = 10000; // 10s
+  var LS_KEY = "agilh.user";
+
+  function first(obj, keys, dflt) {
+    for (var i=0;i<keys.length;i++){ var k=keys[i]; if (obj && obj[k]!=null) return obj[k]; }
+    return dflt;
+  }
+  function lower(s){ return (s==null?"":String(s)).toLowerCase(); }
+  function toHours(min){ if(min==null) return null; return Math.round((min/60)*10)/10; }
+  function byDateDesc(getter){
+    return function(a,b){
+      var da = getter(a) ? Date.parse(getter(a)) : 0;
+      var db = getter(b) ? Date.parse(getter(b)) : 0;
+      return db - da;
+    };
+  }
 
   return Controller.extend("agilh.controller.Landing", {
+
     onInit: function () {
-      // 1) Ziel-Model für die Landing-Sektionen (leerer Start)
+      // Ziel-ViewModel
       var oLanding = new JSONModel({
         user: { isLoggedIn: false, name: "", email: "" },
         lastCourse: null,
         recommendations: [],
         todos: [],
-        newCourses: []
+        newCourses: [],
+        showInProgress: false,
+        showEmptyState: true
       });
       this.getView().setModel(oLanding, "landing");
 
-      // 2) Dataset laden (data.json über /api)
-      var oDS = new JSONModel();
-      oDS.attachRequestCompleted(this._onDatasetLoaded.bind(this, oDS));
-      oDS.attachRequestFailed(function (e) {
-        /* eslint-disable no-console */
-        console.error("data.json laden fehlgeschlagen:", e);
-      });
-      oDS.loadData("/api/data.json", null, true);
+      // a) Beim erstmaligen Laden des globalen Models "data"
+      var m = this.getOwnerComponent().getModel("data");
+      if (m && m.getData && Object.keys(m.getData()||{}).length) {
+        this._buildLanding();
+      } else if (m) {
+        var done = () => { m.detachRequestCompleted(done, this); this._buildLanding(); };
+        m.attachRequestCompleted(done, this);
+      }
+
+      // b) Jedes Mal, wenn die Route "landing" aufgerufen wird
+      this._router = this.getOwnerComponent().getRouter();
+      if (this._router && this._router.getRoute) {
+        this._router.getRoute("landing").attachPatternMatched(this._onRouteMatched, this);
+      }
+
+      // c) Nach Login/Logout (kommt aus App.controller)
+      sap.ui.getCore().getEventBus().subscribe("agilh", "authChanged", this._onAuthChanged, this);
     },
 
-    _onDatasetLoaded: function (oDS) {
-      var ds = oDS.getData();
-      if (!ds || !ds.master_data || !ds.master_data.courses) return;
+    _onRouteMatched: function () {
+      this._buildLanding();
+    },
 
-      var courses = ds.master_data.courses || [];
-      var levels  = ds.master_data.levels  || [];
-      var users   = ds.master_data.users   || [];
-      var progressEntries = (ds.transactional_data && ds.transactional_data.user_course_progress) || [];
+    _onAuthChanged: function () {
+      this._buildLanding();
+    },
 
-      // "Demo-Login": Wenn du lokal einen User simulieren willst:
-      // localStorage.setItem('agilh.demoEmail', 'ali.mueller@contoso.net')
-      var demoEmail = window.localStorage.getItem("agilh.demoEmail") || "";
-      var userObj = users.find(u => u.email === demoEmail);
-      var isLoggedIn = !!userObj;
+    // Kern: baut alle Sektionen anhand des globalen Models und des aktuellen Logins
+    _buildLanding: function () {
+      var m = this.getOwnerComponent().getModel("data");
+      if (!m || !m.getData) return;
+      var ds = m.getData() || {};
+      var md = ds.master_data || {};
+      var td = ds.transactional_data || {};
+      var courses = md.courses || [];
+      var levels  = md.levels  || [];
+      var users   = md.users   || [];
+      var progressEntries = td.user_course_progress || [];
 
-      // --- Mapping-Funktionen ---
+      // aktueller User
+      var currentUser = null;
+      try { currentUser = JSON.parse(localStorage.getItem(LS_KEY) || "null"); } catch(e){}
+      var isLoggedIn = !!(currentUser && currentUser.email);
+
+      var userObj = isLoggedIn
+        ? (users.find(u => lower(u.email) === lower(currentUser.email)) || currentUser)
+        : null;
+
       var levelTitle = function (level_id) {
         var l = levels.find(x => x.id === level_id);
         return l ? l.title : (level_id || "");
       };
-      var toHours = function (min) {
-        if (min == null) return null;
-        return Math.round((min / 60) * 10) / 10; // 1 Nachkommastelle
-      };
-      var byDateDesc = function (getter) {
-        return function (a, b) {
-          var da = getter(a) ? Date.parse(getter(a)) : 0;
-          var db = getter(b) ? Date.parse(getter(b)) : 0;
-          return db - da;
-        };
-      };
 
-      // --- lastCourse (nur wenn "eingeloggt") ---
+      // ---- lastCourse ----
       var lastCourse = null;
       if (isLoggedIn) {
-        var myProg = progressEntries.filter(p => p.user_email === demoEmail);
+        var myProg = progressEntries.filter(p =>
+          lower(first(p, ["user_email","email","userMail"], "")) === lower(currentUser.email)
+        );
+
         if (myProg.length) {
-          // bevorzugt "in_progress", sonst jüngster Start/Abschluss
-          var inProg = myProg.filter(p => p.status === "in_progress");
+          var inProg = myProg.filter(p => lower(first(p, ["status"], "")) === "in_progress");
           var pickFrom = inProg.length ? inProg : myProg;
+
           pickFrom.sort((a,b) => {
-            var ta = Date.parse(a.completed_at || a.started_at || 0);
-            var tb = Date.parse(b.completed_at || b.started_at || 0);
+            var ta = Date.parse(first(a, ["completed_at","started_at","updated_at"], 0));
+            var tb = Date.parse(first(b, ["completed_at","started_at","updated_at"], 0));
             return tb - ta;
           });
+
           var latest = pickFrom[0];
-          var c = courses.find(x => x.id === latest.course_id);
+          var c = courses.find(x => x.id === first(latest, ["course_id","courseId","course"], null));
           if (c) {
+            var pct = first(latest, ["progress_percent","progress","percent"], 0) || 0;
             lastCourse = {
               id: c.id,
               title: c.title,
               level: levelTitle(c.level_id),
-              durationH: toHours(c.total_duration_minutes) || null,
-              progressPercent: latest.progress_percent || 0
+              durationH: toHours(first(c, ["total_duration_minutes","duration_minutes"], null)) || null,
+              progressPercent: Number(pct) || 0
             };
           }
         }
       }
 
-      // --- recommendations ---
+      // ---- recommendations ----
       var recommendations = [];
       if (isLoggedIn && lastCourse) {
         var anchor = courses.find(c => c.id === lastCourse.id);
@@ -109,12 +143,11 @@ sap.ui.define([
               id: x.c.id,
               title: x.c.title,
               level: levelTitle(x.c.level_id),
-              durationH: toHours(x.c.total_duration_minutes) || null
+              durationH: toHours(first(x.c, ["total_duration_minutes","duration_minutes"], null)) || null
             }));
         }
       }
       if (!recommendations.length) {
-        // Guest/Default: zuletzt aktualisierte, öffentlich
         recommendations = courses
           .filter(c => c.is_public !== false)
           .slice().sort(byDateDesc(c => c.updated_at))
@@ -123,11 +156,11 @@ sap.ui.define([
             id: c.id,
             title: c.title,
             level: levelTitle(c.level_id),
-            durationH: toHours(c.total_duration_minutes) || null
+            durationH: toHours(first(c, ["total_duration_minutes","duration_minutes"], null)) || null
           }));
       }
 
-      // --- newCourses ---
+      // ---- newCourses ----
       var newCourses = courses
         .filter(c => c.is_public !== false)
         .slice().sort(byDateDesc(c => c.created_at))
@@ -138,23 +171,24 @@ sap.ui.define([
           level: levelTitle(c.level_id)
         }));
 
-      // --- todos (nur wenn eingeloggt) ---
+      // ---- todos (nur wenn eingeloggt) ----
       var todos = [];
       if (isLoggedIn) {
-        var myOpen = progressEntries
-          .filter(p => p.user_email === demoEmail && p.status !== "completed");
-        // zeige max. 6 „Weiter mit …“
+        var myOpen = progressEntries.filter(p =>
+          lower(first(p, ["user_email","email","userMail"], "")) === lower(currentUser.email) &&
+          lower(first(p, ["status"], "")) !== "completed"
+        );
         todos = myOpen.slice(0, 6).map(p => {
-          var cc = courses.find(x => x.id === p.course_id);
+          var cc = courses.find(x => x.id === first(p, ["course_id","courseId","course"], null));
           return {
-            id: p.course_id,
-            title: cc ? ("Weiter mit: " + cc.title) : ("Weiter mit Kurs " + p.course_id),
+            id: first(p, ["course_id","courseId","course"], ""),
+            title: cc ? ("Weiter mit: " + cc.title) : ("Weiter mit Kurs " + first(p, ["course_id","courseId","course"], "")),
             done: false
           };
         });
       }
 
-      // --- Landing-Model setzen ---
+      // ---- Landing-Model setzen inkl. Sichtbarkeiten ----
       var oLanding = this.getView().getModel("landing");
       oLanding.setData({
         user: {
@@ -165,14 +199,15 @@ sap.ui.define([
         lastCourse: lastCourse,
         recommendations: recommendations,
         todos: todos,
-        newCourses: newCourses
+        newCourses: newCourses,
+        showInProgress: !!(isLoggedIn && lastCourse),
+        showEmptyState: !isLoggedIn || !lastCourse
       });
     },
 
     onAfterRendering: function () {
       var crsl = this.byId("hero");
       if (!crsl || this._autoTimer) return;
-
       this._autoTimer = setInterval(function () {
         var aPages = crsl.getPages();
         if (!aPages || !aPages.length) return;
@@ -184,7 +219,10 @@ sap.ui.define([
     },
 
     onBeforeRendering: function () { this._clearAuto(); },
-    onExit: function () { this._clearAuto(); },
+    onExit: function () {
+      this._clearAuto();
+      sap.ui.getCore().getEventBus().unsubscribe("agilh", "authChanged", this._onAuthChanged, this);
+    },
     _clearAuto: function () {
       if (this._autoTimer) { clearInterval(this._autoTimer); this._autoTimer = null; }
     },
@@ -198,7 +236,8 @@ sap.ui.define([
     onOpenCourse: function (oEvent) {
       var cd = (oEvent.getSource().getCustomData() || []).find(function (c) { return c.getKey && c.getKey() === "courseId"; });
       var id = cd && cd.getValue();
-      console.log("open course:", id); // später: Router navTo
+      // später: this.getOwnerComponent().getRouter().navTo("course", {id});
+      console.log("open course:", id);
     },
 
     onToggleTodo: function (oEvent) {

@@ -266,8 +266,8 @@ sap.ui.define([
     },
 
     _afterAuthChange: function () {
-      this.getOwnerComponent().getRouter().navTo("landing", {}, true); // true = History-Eintrag ersetzen
-      // Optional: an den Anfang scrollen
+      this.getOwnerComponent().getRouter().navTo("landing", {}, true);
+      sap.ui.getCore().getEventBus().publish("agilh", "authChanged");
       try { window.scrollTo({ top: 0, behavior: "auto" }); } catch(e) {}
     },
 
